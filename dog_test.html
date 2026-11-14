@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🐶 小狗人格测试</title>
+    <style>
+        :root {
+            --pink: #5b9bff;
+            --peach: #7fb8ff;
+            --sky: #a8d0ff;
+            --mint: #a8e6cf;
+            --text: #3b5575;
+            --card: #ffffff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+            background: linear-gradient(135deg, #e0f0ff 0%, #eaf6ff 45%, #d4e6ff 100%);
+            min-height: 100vh;
+            color: var(--text);
+            padding: 20px 16px 60px;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .wrap {
+            max-width: 620px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin: 16px 0 24px;
+        }
+
+        header .paw {
+            font-size: 44px;
+            display: block;
+            animation: bounce 1.6s infinite;
+        }
+
+        header h1 {
+            font-size: 1.7rem;
+            margin-top: 6px;
+            color: #3a5a85;
+        }
+
+        header p {
+            font-size: 0.95rem;
+            color: #a07d9a;
+            margin-top: 6px;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+
+        /* 进度条 */
+        .progress-box {
+            position: sticky;
+            top: 10px;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(6px);
+            border-radius: 999px;
+            padding: 10px 14px;
+            box-shadow: 0 4px 16px rgba(91, 155, 255, 0.18);
+            margin-bottom: 24px;
+            z-index: 10;
+        }
+
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            margin-bottom: 6px;
+            color: #a07d9a;
+        }
+
+        .progress-track {
+            height: 14px;
+            background: #e4eefb;
+            border-radius: 999px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--pink), var(--peach), var(--sky));
+            border-radius: 999px;
+            transition: width 0.35s ease;
+        }
+
+        /* 题目卡片 */
+        .question {
+            background: var(--card);
+            border-radius: 20px;
+            padding: 20px 18px;
+            margin-bottom: 18px;
+            box-shadow: 0 6px 20px rgba(91, 155, 255, 0.12);
+            animation: fadeIn 0.4s ease both;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .question .q-title {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: #3a5a85;
+            margin-bottom: 14px;
+        }
+
+        .q-title .num {
+            flex-shrink: 0;
+            width: 26px;
+            height: 26px;
+            line-height: 26px;
+            text-align: center;
+            background: var(--pink);
+            color: #fff;
+            border-radius: 50%;
+            font-size: 0.9rem;
+        }
+
+        .option {
+            display: block;
+            width: 100%;
+            text-align: left;
+            background: #eef4fc;
+            border: 2px solid transparent;
+            border-radius: 14px;
+            padding: 12px 14px;
+            margin-bottom: 10px;
+            font-size: 0.98rem;
+            color: var(--text);
+            cursor: pointer;
+            transition: all 0.15s ease;
+            font-family: inherit;
+        }
+
+        .option:hover {
+            background: #e2edfb;
+        }
+
+        .option .tag {
+            display: inline-block;
+            width: 22px;
+            height: 22px;
+            line-height: 22px;
+            text-align: center;
+            border-radius: 50%;
+            background: #fff;
+            color: var(--pink);
+            font-weight: 700;
+            font-size: 0.8rem;
+            margin-right: 8px;
+        }
+
+        .option.selected {
+            background: #eaf2ff;
+            border-color: var(--pink);
+            color: #2f6fd0;
+            font-weight: 600;
+        }
+
+        .option.selected .tag {
+            background: var(--pink);
+            color: #fff;
+        }
+
+        /* 结果卡片 */
+        .result {
+            display: none;
+            background: var(--card);
+            border-radius: 24px;
+            padding: 32px 22px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(91, 155, 255, 0.18);
+            margin-top: 8px;
+            animation: popIn 0.5s ease both;
+        }
+
+        @keyframes popIn {
+            0% { opacity: 0; transform: scale(0.8); }
+            70% { transform: scale(1.04); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        .result.show {
+            display: block;
+        }
+
+        .result .emoji {
+            font-size: 72px;
+            display: block;
+            animation: bounce 1.6s infinite;
+        }
+
+        .result .dog-img {
+            width: 130px;
+            height: 130px;
+            object-fit: cover;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .result .dog-name {
+            font-size: 1.9rem;
+            font-weight: 700;
+            margin: 10px 0 4px;
+            color: #3a5a85;
+        }
+
+        .result .dog-sub {
+            font-size: 0.9rem;
+            color: #a07d9a;
+            margin-bottom: 18px;
+        }
+
+        .result .dog-desc {
+            font-size: 1.05rem;
+            line-height: 1.8;
+            color: #4a6688;
+            text-align: left;
+            background: #eef4fc;
+            border-radius: 16px;
+            padding: 16px 18px;
+        }
+
+        .restart-btn {
+            margin-top: 24px;
+            padding: 14px 34px;
+            font-size: 1.05rem;
+            color: #fff;
+            background: linear-gradient(90deg, var(--pink), var(--peach));
+            border: none;
+            border-radius: 999px;
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: 600;
+            box-shadow: 0 6px 16px rgba(91, 155, 255, 0.35);
+            transition: transform 0.15s ease;
+        }
+
+        .restart-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .restart-btn:active {
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+    <div class="wrap">
+        <header>
+            <span class="paw">🐾</span>
+            <h1>小狗人格测试</h1>
+            <p>选出最像你的答案，看看你是哪种小狗吧～</p>
+        </header>
+
+        <div class="progress-box">
+            <div class="progress-label">
+                <span>答题进度</span>
+                <span id="progressText">0 / 8</span>
+            </div>
+            <div class="progress-track">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+        </div>
+
+        <div id="quiz"></div>
+
+        <div class="result" id="result">
+            <span class="emoji" id="resultEmoji"></span>
+            <div class="dog-name" id="resultName"></div>
+            <div class="dog-sub" id="resultSub"></div>
+            <div class="dog-desc" id="resultDesc"></div>
+            <button class="restart-btn" onclick="restart()">🔄 重新测试</button>
+        </div>
+    </div>
+
+    <script>
+        const dogs = [
+            { name: "金毛", emoji: "🦮", desc: "温柔老好人，共情力强，很会照顾别人，脾气包容，容易心软，偶尔会委屈自己。" },
+            { name: "边牧", emoji: "🐕", desc: "聪明机灵，想法多，观察力强，学习快，有主见，爱琢磨事情，有点小叛逆。" },
+            { name: "柴犬", emoji: "🦊", desc: "随性佛系，有自己的小世界，情绪稳定，不爱凑热闹，吃软不吃硬。" },
+            { name: "柯基", emoji: "🐶", img: "柯基.jpg.jpg", desc: "活泼乐天，喜欢热闹，直来直去，热爱分享，容易开心，但是耐心一般。" }
+        ];
+
+        const questions = [
+            { text: "朋友心情不好来找你，你会？", options: ["耐心陪着安慰，优先照顾对方情绪", "帮他分析问题，想解决办法", "安静陪着，不强行多说什么", "拉他出去散心，转移坏情绪"] },
+            { text: "遇到没见过的新任务，你的第一反应？", options: ["有点紧张，怕做不好", "好奇，想研究怎么搞定", "能做就做，不行就算了", "有点兴奋，想快点上手试试"] },
+            { text: "别人误会你的时候？", options: ["心里难受，想解释清楚", "快速理清逻辑去辩驳", "懒得解释，顺其自然", "有点生气，很快就翻篇"] },
+            { text: "空闲的时候你更喜欢？", options: ["和朋友待在一起聊天", "学点新东西、琢磨感兴趣的事", "自己独处刷手机发呆", "约人出去玩，找点乐子"] },
+            { text: "做计划的时候？", options: ["尽量顾及所有人感受", "喜欢安排周密，预留方案", "不爱计划，随遇而安", "简单计划，主打开心"] },
+            { text: "别人拜托你帮忙？", options: ["一般很难拒绝", "评估自己能不能做到再决定", "不想帮会直接婉拒", "乐意帮忙，图个热闹"] },
+            { text: "看待输赢？", options: ["输赢无所谓，大家开心最重要", "喜欢赢，享受动脑取胜", "输赢和我关系不大", "很在意，输了会闷闷不乐一会"] },
+            { text: "吵架之后你通常？", options: ["容易先心软低头", "复盘对错，分清道理", "不想说话，先冷静一阵子", "很快就和好，不记仇"] }
+        ];
+
+        const letters = ["A", "B", "C", "D"];
+        const total = questions.length;
+        const answers = new Array(total).fill(-1);
+
+        const quizEl = document.getElementById("quiz");
+        const progressText = document.getElementById("progressText");
+        const progressFill = document.getElementById("progressFill");
+        const resultEl = document.getElementById("result");
+
+        function renderQuiz() {
+            quizEl.innerHTML = "";
+            questions.forEach((q, qi) => {
+                const card = document.createElement("div");
+                card.className = "question";
+
+                const title = document.createElement("div");
+                title.className = "q-title";
+                title.innerHTML = '<span class="num">' + (qi + 1) + "</span><span>" + q.text + "</span>";
+                card.appendChild(title);
+
+                q.options.forEach((opt, oi) => {
+                    const btn = document.createElement("button");
+                    btn.className = "option";
+                    btn.innerHTML = '<span class="tag">' + letters[oi] + "</span>" + opt;
+                    btn.addEventListener("click", function () {
+                        choose(qi, oi);
+                    });
+                    card.appendChild(btn);
+                });
+
+                quizEl.appendChild(card);
+            });
+        }
+
+        function choose(qi, oi) {
+            answers[qi] = oi;
+            updateProgress();
+            highlightOptions(qi, oi);
+
+            if (answers.every(function (a) { return a >= 0; })) {
+                setTimeout(showResult, 350);
+            }
+        }
+
+        function highlightOptions(qi, oi) {
+            const card = quizEl.children[qi];
+            const btns = card.querySelectorAll(".option");
+            btns.forEach(function (b, i) {
+                b.classList.toggle("selected", i === oi);
+            });
+        }
+
+        function updateProgress() {
+            const done = answers.filter(function (a) { return a >= 0; }).length;
+            progressText.textContent = done + " / " + total;
+            progressFill.style.width = (done / total * 100) + "%";
+        }
+
+        function dogVisual(d) {
+            if (d.img) {
+                return '<img src="' + d.img + '" alt="' + d.name + '" class="dog-img">';
+            }
+            return d.emoji;
+        }
+
+        function showResult() {
+            const counts = [0, 0, 0, 0];
+            answers.forEach(function (a) { counts[a]++; });
+
+            let max = Math.max.apply(null, counts);
+            const winners = [];
+            counts.forEach(function (c, i) { if (c === max) winners.push(i); });
+
+            const resultEmoji = document.getElementById("resultEmoji");
+            const resultName = document.getElementById("resultName");
+            const resultSub = document.getElementById("resultSub");
+            const resultDesc = document.getElementById("resultDesc");
+
+            if (winners.length === 1) {
+                const d = dogs[winners[0]];
+                resultEmoji.innerHTML = dogVisual(d);
+                resultName.textContent = d.name + "型人格";
+                resultSub.textContent = "你就是一只温暖的" + d.name + "～";
+                resultDesc.textContent = d.desc;
+            } else {
+                const names = winners.map(function (i) { return dogs[i].name; }).join(" + ");
+                const emojis = winners.map(function (i) { return dogVisual(dogs[i]); }).join(" ");
+                const descs = winners.map(function (i) {
+                    return dogs[i].name + "：" + dogs[i].desc;
+                }).join("\n");
+                resultEmoji.innerHTML = emojis;
+                resultName.textContent = names + " 混合型";
+                resultSub.textContent = "你身上有两种小狗的影子，很特别哦～";
+                resultDesc.textContent = descs;
+            }
+
+            resultEl.classList.add("show");
+            resultEl.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+
+        function restart() {
+            answers.fill(-1);
+            resultEl.classList.remove("show");
+            updateProgress();
+            renderQuiz();
+            window.scrollTo({ top: 0, behavior: "smooth" });
+        }
+
+        renderQuiz();
+        updateProgress();
+    </script>
+</body>
+</html>
